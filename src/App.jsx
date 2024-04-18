@@ -1,30 +1,41 @@
+// App.jsx
 import React, { useState } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar';
+import SearchResultsList from './components/SearchResultsList';
+import UserDetails from './components/UserDetails';
 import { githubRequest } from './api';
 
 function App() {
     const [searchResults, setSearchResults] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [userDetails, setUserDetails] = useState(null);
+    const [userRepos, setUserRepos] = useState([]);
 
     const handleSearch = async (query) => {
-        if (query.trim() === '') return;
-
         try {
             const response = await githubRequest(
                 `https://api.github.com/search/users?q=${query}`
             );
-
-            // Affiche la réponse de l'API dans la console
-            console.log('Réponse de l\'API pour la recherche :', response);
-
-            // Met à jour les résultats de la recherche dans l'état local
             setSearchResults(response.items || []);
         } catch (error) {
             console.error('Erreur lors de la recherche :', error);
-
-            // En cas d'erreur, réinitialise les résultats de la recherche
             setSearchResults([]);
         }
+    };
+
+    const handleUserSelect = async (username) => {
+        try {
+            const userResponse = await githubRequest(`https://api.github.com/users/${username}`);
+            const reposResponse = await githubRequest(`https://api.github.com/users/${username}/repos`);
+            setUserDetails(userResponse);
+            setUserRepos(reposResponse);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+            setUserDetails(null);
+            setUserRepos([]);
+        }
+        setSelectedUser(username);
     };
 
     return (
@@ -32,16 +43,12 @@ function App() {
             <h1 className="text-3xl font-bold mb-4">GitHub Research</h1>
             <SearchBar onSearch={handleSearch} />
 
-            {/* Affiche les résultats de la recherche dans la console */}
             {searchResults.length > 0 && (
-                <div className="mt-8">
-                    <h2 className="text-xl font-bold mb-2">Résultats de la recherche :</h2>
-                    <ul className="mt-4">
-                        {searchResults.map((user) => (
-                            <li key={user.id}>{user.login}</li>
-                        ))}
-                    </ul>
-                </div>
+                <SearchResultsList results={searchResults} onUserSelect={handleUserSelect} />
+            )}
+
+            {selectedUser && userDetails && (
+                <UserDetails username={selectedUser} userDetails={userDetails} userRepos={userRepos} />
             )}
         </div>
     );
