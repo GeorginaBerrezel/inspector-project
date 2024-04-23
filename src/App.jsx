@@ -1,10 +1,10 @@
 // App.jsx
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar';
 import SearchResultsList from './components/SearchResultsList';
 import UserDetails from './components/UserDetails';
-import { githubRequest } from './api';
+import {githubRequest} from './api';
 
 function App() {
     const [searchResults, setSearchResults] = useState([]);
@@ -38,18 +38,31 @@ function App() {
         setSelectedUser(username);
     };
 
+    const handleDeselectUser = () => {
+        setSelectedUser(null); // Réinitialise l'utilisateur sélectionné
+        setUserDetails(null); // Réinitialise les détails de l'utilisateur
+        setUserRepos([]); // Réinitialise la liste des dépôts de l'utilisateur
+    };
+
     return (
-        <div className="p-4">
+        <div>
             <h1 className="text-3xl font-bold mb-4">GitHub Research</h1>
-            <SearchBar onSearch={handleSearch} />
-
-            {searchResults.length > 0 && (
-                <SearchResultsList results={searchResults} onUserSelect={handleUserSelect} />
-            )}
-
-            {selectedUser && userDetails && (
-                <UserDetails username={selectedUser} userDetails={userDetails} userRepos={userRepos} />
-            )}
+            <div className="p-4">
+                <SearchBar onSearch={handleSearch}/>
+                <div className="flex-1">
+                    {searchResults.length > 0 && (
+                        <SearchResultsList results={searchResults} onUserSelect={handleUserSelect}/>
+                    )}
+                </div>
+                {selectedUser && userDetails && (
+                    <div className="flex-1 mt-8">
+                        <UserDetails username={selectedUser} userDetails={userDetails} userRepos={userRepos}/>
+                        <button className="mt-4" onClick={handleDeselectUser}>
+                            Désélectionner l'utilisateur
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
