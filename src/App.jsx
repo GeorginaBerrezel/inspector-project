@@ -1,10 +1,9 @@
-// App.jsx
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar';
 import SearchResultsList from './components/SearchResultsList';
 import UserDetails from './components/UserDetails';
-import {githubRequest} from './api';
+import { githubRequest } from './api';
 
 function App() {
     const [searchResults, setSearchResults] = useState([]);
@@ -38,28 +37,31 @@ function App() {
         setSelectedUser(username);
     };
 
-    const handleDeselectUser = () => {
-        setSelectedUser(null); // Réinitialise l'utilisateur sélectionné
-        setUserDetails(null); // Réinitialise les détails de l'utilisateur
-        setUserRepos([]); // Réinitialise la liste des dépôts de l'utilisateur
+    const clearSearch = () => {
+        setSearchResults([]);
     };
 
     return (
         <div>
             <h1 className="text-3xl font-bold mb-4">GitHub Research</h1>
             <div className="p-4">
-                <SearchBar onSearch={handleSearch}/>
+                <SearchBar onSearch={handleSearch} />
                 <div className="flex-1">
                     {searchResults.length > 0 && (
-                        <SearchResultsList results={searchResults} onUserSelect={handleUserSelect}/>
+                        <SearchResultsList
+                            results={searchResults}
+                            onUserSelect={handleUserSelect}
+                            clearSearch={clearSearch} // Passer la fonction de réinitialisation du champ de recherche
+                            selectedUser={selectedUser} // Passer l'utilisateur sélectionné à SearchResultList
+                            setSelectedUser={setSelectedUser} // Passer la fonction pour mettre à jour l'utilisateur sélectionné
+                            setUserDetails={setUserDetails} // Passer la fonction pour mettre à jour les détails de l'utilisateur
+                            setUserRepos={setUserRepos} // Passer la fonction pour mettre à jour les dépôts de l'utilisateur
+                        />
                     )}
                 </div>
                 {selectedUser && userDetails && (
                     <div className="flex-1 mt-8">
-                        <UserDetails username={selectedUser} userDetails={userDetails} userRepos={userRepos}/>
-                        <button className="mt-4" onClick={handleDeselectUser}>
-                            Désélectionner l'utilisateur
-                        </button>
+                        <UserDetails username={selectedUser} userDetails={userDetails} userRepos={userRepos} />
                     </div>
                 )}
             </div>

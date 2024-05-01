@@ -1,10 +1,18 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-const SearchBar = ({onSearch}) => {
+const SearchBar = ({ onSearch }) => {
     const [query, setQuery] = useState('');
 
     const handleInputChange = (event) => {
-        setQuery(event.target.value);
+        const inputValue = event.target.value;
+        setQuery(inputValue);
+        onSearch(inputValue);
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     const handleSearch = () => {
@@ -21,6 +29,7 @@ const SearchBar = ({onSearch}) => {
                 placeholder="Search GitHub user"
                 value={query}
                 onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
             />
             <button
                 className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring focus:ring-orange-500"
