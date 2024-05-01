@@ -18,7 +18,7 @@ function App() {
             );
             setSearchResults(response.items || []);
         } catch (error) {
-            console.error('Erreur lors de la recherche :', error);
+            console.error('Error during search:', error);
             setSearchResults([]);
         }
     };
@@ -30,7 +30,7 @@ function App() {
             setUserDetails(userResponse);
             setUserRepos(reposResponse);
         } catch (error) {
-            console.error('Erreur lors de la récupération des détails de l\'utilisateur :', error);
+            console.error('Error retrieving user details:', error);
             setUserDetails(null);
             setUserRepos([]);
         }
@@ -41,8 +41,12 @@ function App() {
         setSearchResults([]);
     };
 
+    const hideSearchResults = () => {
+        setSearchResults([]);
+    };
+
     return (
-        <div>
+        <div className="bg-gray-900 text-white min-h-screen">
             <h1 className="text-3xl font-bold mb-4">GitHub Research</h1>
             <div className="p-4">
                 <SearchBar onSearch={handleSearch} />
@@ -51,11 +55,12 @@ function App() {
                         <SearchResultsList
                             results={searchResults}
                             onUserSelect={handleUserSelect}
-                            clearSearch={clearSearch} // Passer la fonction de réinitialisation du champ de recherche
-                            selectedUser={selectedUser} // Passer l'utilisateur sélectionné à SearchResultList
-                            setSelectedUser={setSelectedUser} // Passer la fonction pour mettre à jour l'utilisateur sélectionné
-                            setUserDetails={setUserDetails} // Passer la fonction pour mettre à jour les détails de l'utilisateur
-                            setUserRepos={setUserRepos} // Passer la fonction pour mettre à jour les dépôts de l'utilisateur
+                            clearSearch={clearSearch} // search field reset function
+                            hideSearchResults={hideSearchResults} // hide search results
+                            selectedUser={selectedUser} // selected user to SearchResultList
+                            setSelectedUser={setSelectedUser} // update the selected user
+                            setUserDetails={setUserDetails} // update user details
+                            setUserRepos={setUserRepos} // update user repositories
                         />
                     )}
                 </div>
